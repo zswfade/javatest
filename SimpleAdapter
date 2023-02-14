@@ -1,36 +1,17 @@
-package com.example.scm800b;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-/*listview中按控件没有反应，是子控件和父控件再抢焦点，android:descendantFocusability这个父控件参数可以设置焦点的抢先抢后
-   当你需要监视SimpleAdapter的时候，你可以采用重写getView来解决这个问题。getView是生成view,然后在view中获得控件资源，实现控件的监听接口。
- */
-
+/*
+* 2023.02.13
+* zsw
+* */
 public class FiveNose_Parameter_setup extends Fragment implements View.OnClickListener {
     public static String[] par1={"空压机启动延时：","轴心到位延时：","弯箍到位延时：","弯箍返回延时：","报警检测时间"};
     public static String[] par2={"空压机停机延时：","压紧到位延时：","4号机预弯时间：","外包4头顶时间：","压紧到位延时"};
-    public static int[] par_value1={888,888,888,888,888};
-    public static int[] par_value2={888,888,8888,8888,888};
+    public static int[] par_value1={0,0,0,0,5};
+    public static int[] par_value2={65535,0,0,500,0};
     private Context mcontext;
     private ListView listView;
-    private EditText par_val1;
-    private EditText par_val2;
+    private EditText[] par_val1;
+    private EditText[] par_val2;
     String TAG="SIMPLE";
     public FiveNose_Parameter_setup(Context mcontext) {
         super();
@@ -48,6 +29,7 @@ public class FiveNose_Parameter_setup extends Fragment implements View.OnClickLi
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_five_nose__parameter_setup, container, false);
         // Inflate the layout for this fragment
+
         List<Map<String,Object>> lististem=new ArrayList<Map<String, Object>>() ;
         for (int i=0;i<par1.length;i++){
             Map<String,Object> showitem=new HashMap<>();
@@ -57,25 +39,46 @@ public class FiveNose_Parameter_setup extends Fragment implements View.OnClickLi
             showitem.put("par_value2",par_value2[i]);
             lististem.add(showitem);
         }
+        par_val1=new EditText[par_value1.length];
+        par_val2=new EditText[par_value2.length];
         //android:descendantFocusability="beforeDescendants"注意焦点的获取问题
         SimpleAdapter adapter=new SimpleAdapter(mcontext,lististem,R.layout.adapter_fivenose,new String[]{"par1","par_value1","par2","par_value2"}
         ,new int[]{R.id.describe_item1,R.id.item1,R.id.describe_item2,R.id.item2}){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
              View view=super.getView(position, convertView, parent);
-                par_val1=view.findViewById(R.id.item1);
-                par_val2=view.findViewById(R.id.item2);
-               par_val1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                par_val1[position]=view.findViewById(R.id.item1);
+                par_val2[position]=view.findViewById(R.id.item2);
+                par_val1[position].setOnEditorActionListener(new TextView.OnEditorActionListener() {
                    @Override
                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                       Log.d(TAG, "onEditorAction: "+position);
+                       if (actionId == EditorInfo.IME_ACTION_DONE||actionId==EditorInfo.IME_ACTION_NEXT) {
+                            String str=par_val1[position].getText().toString();
+                            if(str.length()!=0) {
+                                int temp1 = Integer.parseInt(str);
+                                Log.d(TAG, "onEditorAction1: " + position + ":" + temp1);
+                            }
+                       }
+                       else
+                       {
+                           Log.d(TAG, "onEditorAction: input null");
+                       }
                        return false;
                    }
                });
-               par_val2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+               par_val2[position].setOnEditorActionListener(new TextView.OnEditorActionListener() {
                    @Override
                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                       Log.d(TAG, "onEditorAction: "+position);
+                       if (actionId == EditorInfo.IME_ACTION_DONE||actionId==EditorInfo.IME_ACTION_NEXT) {
+                           String str=par_val2[position].getText().toString();
+                           if(str.length()!=0) {
+                               int temp1 = Integer.parseInt(str);
+                               Log.d(TAG, "onEditorAction2: " + position + ":" + temp1);
+                           }
+                       }
+                       else{
+                           Log.d(TAG, "onEditorAction: input2 null");
+                       }
                        return false;
                    }
                });
@@ -116,4 +119,3 @@ public class FiveNose_Parameter_setup extends Fragment implements View.OnClickLi
     public void onClick(View v) {
 
     }
-}
