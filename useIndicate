@@ -1,3 +1,8 @@
+/*need add app gradle.build  dependence{
+  implementation 'com.google.zxing:core:3.3.0'     
+}
+//wait sync finish!
+*/
 package com.example.myapplication
 
 import android.Manifest;
