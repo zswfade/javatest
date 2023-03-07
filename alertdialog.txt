@@ -1,0 +1,62 @@
+public void InitAleratedialog(){
+        int[] temp=new int[10];
+        byte[] data=new byte[40];
+        context=FiveNoseController_Main.this;
+        dialogbuilder=new AlertDialog.Builder(context);
+        inflater=FiveNoseController_Main.this.getLayoutInflater();
+        angle_modify=inflater.inflate(R.layout.angle_modify,null,false);
+        dialogbuilder.setView(angle_modify);
+        dialogbuilder.setCancelable(false);
+        alertDialog=dialogbuilder.create();
+        input_modfiy[0]=angle_modify.findViewById(R.id.input_angle1);
+        input_modfiy[1]=angle_modify.findViewById(R.id.input_angle2);
+        input_modfiy[2]=angle_modify.findViewById(R.id.input_angle3);
+        input_modfiy[3]=angle_modify.findViewById(R.id.input_angle4);
+        input_modfiy[4]=angle_modify.findViewById(R.id.input_angle5);
+        input_modfiy[5]=angle_modify.findViewById(R.id.input_angle6);
+        input_modfiy[6]=angle_modify.findViewById(R.id.input_angle7);
+        input_modfiy[7]=angle_modify.findViewById(R.id.input_angle8);
+        input_modfiy[8]=angle_modify.findViewById(R.id.input_angle9);
+        input_modfiy[9]=angle_modify.findViewById(R.id.input_angle10);
+        /*弹窗中并没有输入监听，所以需要按扭监听去确定，然后通过view去读取*/
+        angle_modify.findViewById(R.id.angle_back_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int j=0,i=0;i<10;i++) {
+                    temp[i] = Integer.parseInt(input_modfiy[i].getText().toString());
+                    System.arraycopy(Protocol.intTobyte(temp[i]),0,data,j,4);
+                    j+=4;
+                }
+                byte[] msg = Protocol.SetMsg((short) 0, Protocol.set_sildofgraph, 0x56, data);
+                FiveNoseController_Main.queue.offer(msg);  // 将消息放入阻塞队列，由发送线程发送
+                alertDialog.dismiss();
+            }
+        });
+}
+/*常规提示框的使用方法*/
+/*
+               alert = null;
+                builder = new AlertDialog.Builder(mContext);
+                alert = builder.setIcon(R.mipmap.ic_icon_fish)
+                        .setTitle("系统提示：")
+                        .setMessage("这是一个最普通的AlertDialog,\n带有三个按钮，分别是取消，中立和确定")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(mContext, "你点击了取消按钮~", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(mContext, "你点击了确定按钮~", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNeutralButton("中立", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(mContext, "你点击了中立按钮~", Toast.LENGTH_SHORT).show();
+                            }
+                        }).create();             //创建AlertDialog对象
+                alert.show();                    //显示对话框
+*/
